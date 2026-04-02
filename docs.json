@@ -74,9 +74,10 @@
 
           },
           {
-            "group": "Research Directions",
+            "group": "Related Research",
             "pages": [
-              "research/open-challenges"
+              "research/Aligned",
+              "research/Adjacent"
             ]
           }
         ]
