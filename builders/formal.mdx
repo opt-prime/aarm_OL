@@ -1,0 +1,200 @@
+---
+title: "Formal"
+description: "Protocol-aware reverse proxy for data, infrastructure, and AI agent security"
+---
+
+<div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  <img
+    src="/images/formal_logo.jpeg"
+    alt="Formal"
+    style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'contain', border: '1px solid var(--colors-border)' }}
+  />
+  <span style={{
+    background: 'linear-gradient(135deg, #E8F5E9, #C8E6C9)',
+    color: '#2E7D32',
+    fontSize: '11px',
+    fontWeight: 700,
+    padding: '4px 10px',
+    borderRadius: '20px',
+    letterSpacing: '0.05em',
+    border: '1px solid rgba(46, 125, 50, 0.15)',
+    boxShadow: '0 1px 3px rgba(46, 125, 50, 0.08)'
+  }}>
+    ✓ AARM CONFORMANT — CORE
+  </span>
+  <span style={{ color: 'var(--colors-content-secondary)', fontSize: '14px' }}>
+    Protocol-aware reverse proxy · <a href="https://formal.ai" target="_blank">formal.ai ↗</a>
+  </span>
+</div>
+
+<Tabs>
+  <Tab title="Overview">
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '2rem' }}>
+  <div style={{
+    padding: '16px',
+    borderRadius: '12px',
+    border: '1px solid var(--colors-border)',
+    background: 'var(--colors-background-secondary)',
+  }}>
+    <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--colors-content-secondary)', marginBottom: '6px' }}>Status</div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block', boxShadow: '0 0 6px rgba(76, 175, 80, 0.4)' }}></span>
+      <span style={{ fontSize: '15px', fontWeight: 600 }}>Conformant</span>
+    </div>
+  </div>
+  <div style={{
+    padding: '16px',
+    borderRadius: '12px',
+    border: '1px solid var(--colors-border)',
+    background: 'var(--colors-background-secondary)',
+  }}>
+    <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--colors-content-secondary)', marginBottom: '6px' }}>Tier</div>
+    <div style={{ fontSize: '15px', fontWeight: 600 }}>Core (R1–R6)</div>
+  </div>
+  <div style={{
+    padding: '16px',
+    borderRadius: '12px',
+    border: '1px solid var(--colors-border)',
+    background: 'var(--colors-background-secondary)',
+  }}>
+    <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--colors-content-secondary)', marginBottom: '6px' }}>Verified</div>
+    <div style={{ fontSize: '15px', fontWeight: 600 }}>April 2026</div>
+  </div>
+  <div style={{
+    padding: '16px',
+    borderRadius: '12px',
+    border: '1px solid var(--colors-border)',
+    background: 'var(--colors-background-secondary)',
+  }}>
+    <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--colors-content-secondary)', marginBottom: '6px' }}>Builder Member</div>
+    <div style={{ fontSize: '15px', fontWeight: 600 }}>Yes</div>
+  </div>
+</div>
+
+### Description
+
+Formal is a protocol-aware reverse proxy that enforces least privilege at the wire-protocol level across data, infrastructure, and AI agent traffic. It sits between identities — engineers, BI tools, CI/CD pipelines, and AI agents — and resources like databases, warehouses, SSH/Kubernetes, and MCP servers, parsing 15+ wire protocols natively and evaluating security policies inline on every request.
+
+For AI agent workloads, Formal proxies traffic between agents and MCP servers, applying the same policy surface it applies to human-initiated database queries: identity resolution, query-level authorization, PII masking, tool-call filtering, and full audit capture. Because the proxy parses MCP natively rather than treating it as opaque TCP traffic, it can make decisions on the specific tool being invoked, the arguments being passed, and the data flowing back.
+
+Formal's relevance to AARM is direct: it operates at the wire-protocol chokepoint where agents call tools, which makes it a natural pre-execution enforcement point for authorization, identity binding, and tamper-evident auditing of autonomous agent activity.
+
+### Platform capabilities
+
+<CardGroup cols={2}>
+  <Card title="MCP proxy with wire-level parsing" icon="shield-halved">
+    Proxies every tool call between AI agents and MCP servers with native MCP protocol parsing, enabling decisions on the specific tool and arguments invoked rather than opaque TCP metadata.
+  </Card>
+  <Card title="Nine inline policy actions" icon="filter">
+    Allow, Block, Mask, Filter, Rewrite, Quarantine, Suspend, MFA, and Impersonate — evaluated at three stages of the request lifecycle: session, request, and response.
+  </Card>
+  <Card title="Identity-aware access control" icon="fingerprint">
+    Okta-integrated provisioning, short-lived credentials, and JIT access workflows via Slack and Jira. Every identity — human or agent — is resolved before policy evaluation.
+  </Card>
+  <Card title="Panopticon audit layer" icon="list-check">
+    Every query, session, and policy decision logged with full context across every protocol. Sub-second search across full history, with export to Splunk, Datadog, or S3.
+  </Card>
+  <Card title="PII and PHI masking" icon="eye-slash">
+    Query-level data masking for HIPAA, SOC 2, PCI DSS, and GDPR. PII is stripped from agent tool-call responses before reaching the LLM, preventing leakage into model context.
+  </Card>
+  <Card title="Policy backtesting" icon="flask">
+    What-if analysis runs proposed policies against up to 31 days of historical logs before enforcement, showing exactly which requests would be blocked or masked.
+  </Card>
+</CardGroup>
+
+### Integration coverage
+
+Formal sits at the wire-protocol layer, so the same proxy governs agent traffic, human database access, and infrastructure sessions through a single policy surface.
+
+<AccordionGroup>
+  <Accordion title="Protocols and resources">
+    One stateless binary handles 15+ protocols including MCP, Postgres, MySQL, MongoDB, Snowflake, BigQuery, ClickHouse, DynamoDB, Redis, S3, SSH, Kubernetes, RDP, HTTP, and gRPC. Native wire-level parsing, not generic TCP passthrough.
+  </Accordion>
+  <Accordion title="AI clients and agents">
+    Supports any MCP-compatible client or agent, including Claude Code, Cursor, and custom-built agents. No client-side SDK or code changes required — agents point their MCP connection string through the Formal proxy.
+  </Accordion>
+  <Accordion title="Identity and security stack">
+    Native Okta integration for SSO and provisioning, with Slack and Jira hooks for just-in-time access requests. Audit logs export to Splunk, Datadog, and S3.
+  </Accordion>
+  <Accordion title="Deployment model">
+    Deployed as a single distroless Go binary in the customer's VPC via Terraform, Pulumi, Kubernetes, or Docker. Stateless, with sub-10ms p50 overhead. Data never leaves customer infrastructure.
+  </Accordion>
+</AccordionGroup>
+
+  </Tab>
+
+  <Tab title="Conformance">
+
+### Conformance record
+
+| | |
+|---|---|
+| Specification version | AARM v1.0 |
+| Conformance tier | Core (R1–R6) |
+| Verified by | Herman Errico, AARM author |
+| Date | April 2026 |
+
+### Architecture
+
+Formal enforces AARM requirements through a wire-protocol-aware reverse proxy pattern. The proxy sits between AI agents and MCP servers and parses MCP traffic natively, exposing the specific tool being invoked, the arguments, and the response payload to the policy engine before anything reaches the downstream resource. Because the proxy is stateless and deployed inside the customer's VPC, every agent tool call passes through a single, auditable chokepoint with no egress.
+
+Context accumulation is handled by tying each request to a resolved identity (via Okta or the customer's IdP), the target resource, the tool being called, and the session in which the call originated. Policies then evaluate at three stages of the request lifecycle — session, request, and response — with nine distinct inline actions available: Allow, Block, Mask, Filter, Rewrite, Quarantine, Suspend, MFA, and Impersonate. Policy evaluation is deterministic and pre-execution only; Formal's policy surface is limited to static pre-execution scenarios that block or modify agent actions before they execute based on predefined rules, rather than evaluating non-deterministic intent alignment at runtime. The platform has full observability into every tool call an agent makes, which supports the detection and enforcement portions of the AARM policy model.
+
+Every authorization decision, identity binding, and policy evaluation is written to the Panopticon audit layer, which records full query and session context across every protocol the proxy handles. Logs are sub-second searchable and exportable to Splunk, Datadog, or S3 for downstream correlation and retention.
+
+### AARM requirement coverage
+
+#### Core requirements (R1–R6 MUST) extended requirements (R7–R9 SHOULD)
+
+
+| Requirement | Description | Status |
+|---|---|---|
+| R1 | Pre-Execution Interception | ✅ Met |
+| R2 | Context Accumulation | ✅ Met |
+| R3 | Policy Evaluation with Intent Alignment | ✅ Met — deterministic, pre-execution only |
+| R4 | Five authorization decisions (ALLOW / DENY / MODIFY / STEP_UP) | ✅ Met |
+| R5 | Immutable audit log | ✅ Met |
+| R6 | Identity Binding | ✅ Met |
+| R7 | Semantic distance tracking | ❌ Not met |
+| R8 | Telemetry Export | ✅ Met |
+| R9 | Least Privilege Enforcement | ✅ Met |
+
+  </Tab>
+
+  <Tab title="About">
+
+### Company
+
+Formal is building the protocol-aware security proxy layer for modern data, infrastructure, and AI agent workloads. Rather than operating at the network layer like a traditional firewall, Formal parses wire protocols natively — Postgres, MySQL, MongoDB, MCP, and over a dozen others — which lets it make query-level decisions on who is doing what to which resource, in real time.
+
+The company's thesis is that as AI agents proliferate inside enterprises, the enforcement point that matters most is the one closest to the resource, not the one closest to the agent. A proxy that understands the wire protocol can strip PII from MCP responses before they reach an LLM, block unauthorized tool calls, and enforce permissions that the upstream system does not natively support — all without requiring application changes, SDKs, or changes to the agent itself.
+
+Formal's AI agent use case sits alongside its original data access governance product, and the same proxy serves both: the policy engine, audit layer, and deployment model are unified across human and agent traffic. Customers include Notion, Gusto, Ramp, Cursor, Modern Health, Anchorage, and Doctolib.
+
+### Key facts
+
+| | |
+|---|---|
+| Legal entity | Maytana, Inc. |
+| Customers | Notion, Gusto, Ramp, Cursor, Modern Health, Anchorage, Doctolib, ManoMano |
+| Protocols supported | 15+ including MCP, Postgres, MySQL, MongoDB, Snowflake, SSH, Kubernetes |
+| Performance | Sub-10ms p50 proxy overhead |
+| Deployment | Self-hosted in customer VPC (Terraform, Pulumi, Kubernetes, Docker) |
+
+### Contact
+
+| | |
+|---|---|
+| Website | [formal.ai ↗](https://formal.ai) |
+| Documentation | [docs.formal.ai ↗](https://docs.formal.ai) |
+
+  </Tab>
+
+</Tabs>
+
+---
+
+<Info>
+  This page is maintained by the AARM Technical Working Group. To report an inaccuracy or request an update, [open a GitHub issue](https://github.com/aarm-dev/docs/issues).
+</Info>
