@@ -137,11 +137,13 @@ Formal sits at the wire-protocol layer, so the same proxy governs agent traffic,
 
 ### Architecture
 
-Formal enforces AARM requirements through a wire-protocol-aware reverse proxy pattern. The proxy sits between AI agents and MCP servers and parses MCP traffic natively, exposing the specific tool being invoked, the arguments, and the response payload to the policy engine before anything reaches the downstream resource. Because the proxy is stateless and deployed inside the customer's VPC, every agent tool call passes through a single, auditable chokepoint with no egress.
-
-Context accumulation is handled by tying each request to a resolved identity (via Okta or the customer's IdP), the target resource, the tool being called, and the session in which the call originated. Policies then evaluate at three stages of the request lifecycle — session, request, and response — with nine distinct inline actions available: Allow, Block, Mask, Filter, Rewrite, Quarantine, Suspend, MFA, and Impersonate. Policy evaluation is deterministic and pre-execution only; Formal's policy surface is limited to static pre-execution scenarios that block or modify agent actions before they execute based on predefined rules, rather than evaluating non-deterministic intent alignment at runtime. The platform has full observability into every tool call an agent makes, which supports the detection and enforcement portions of the AARM policy model.
-
-Every authorization decision, identity binding, and policy evaluation is written to the Panopticon audit layer, which records full query and session context across every protocol the proxy handles. Logs are sub-second searchable and exportable to Splunk, Datadog, or S3 for downstream correlation and retention.
+Formal enforces AARM requirements through interception at two complementary layers. The first is a client-side layer that sits between a developer's AI coding tools and the model APIs they call, allowing agent tool calls to be inspected and blocked pre-execution based on policy. Customers who want observability only can operate without this layer; customers who want enforcement route traffic through it.
+ 
+The second layer is Formal's protocol-aware proxy between identities and downstream resources such as databases, HTTP services, and productivity suites. It applies policy across session, request, and response stages and can allow, block, modify, or step up authentication on a given call. Because agent-originated traffic carries context from the first layer, the proxy can differentiate a human-issued query from one issued by an agent session and apply controls accordingly.
+ 
+Session context is captured across both layers, with the agent session as the parent and downstream calls recorded as linked child events. This gives operators a full replay of every action an agent took, scoped to the resolved identity of the user whose environment initiated it. Policy decisions, identity bindings, and tool calls are written to a tamper-evident audit trail, exportable to common SIEM and observability backends.
+ 
+Policy evaluation today is deterministic and pre-execution only. Formal's policy surface is limited to static scenarios that block or modify agent actions before they execute based on predefined rules, rather than evaluating non-deterministic intent alignment at runtime. Asynchronous behavioral analysis runs alongside the enforcement path and is on the roadmap to feed into real-time policy inputs.
 
 ### AARM requirement coverage
 
@@ -152,7 +154,7 @@ Every authorization decision, identity binding, and policy evaluation is written
 |---|---|---|
 | R1 | Pre-Execution Interception | ✅ Met |
 | R2 | Context Accumulation | ✅ Met |
-| R3 | Policy Evaluation with Intent Alignment | ✅ Met — deterministic, pre-execution only |
+| R3 | Policy Evaluation with Intent Alignment | ✅ Met — deterministic, non intent based |
 | R4 | Five authorization decisions (ALLOW / DENY / MODIFY / STEP_UP) | ✅ Met |
 | R5 | Immutable audit log | ✅ Met |
 | R6 | Identity Binding | ✅ Met |
@@ -176,10 +178,10 @@ Formal's AI agent use case sits alongside its original data access governance pr
 
 | | |
 |---|---|
-| Legal entity | Maytana, Inc. |
+| Founded | 2022 (YC S20; legal entity Maytana, Inc.) |
+| Funding | $5.8M seed (Thrive Capital, Y Combinator, Abstract Ventures, Kima Ventures) |
 | Customers | Notion, Gusto, Ramp, Cursor, Modern Health, Anchorage, Doctolib, ManoMano |
-| Protocols supported | 15+ including MCP, Postgres, MySQL, MongoDB, Snowflake, SSH, Kubernetes |
-| Performance | Sub-10ms p50 proxy overhead |
+| Leadership | Mokhtar Bacha (Founder & CEO) |
 | Deployment | Self-hosted in customer VPC (Terraform, Pulumi, Kubernetes, Docker) |
 
 ### Contact
