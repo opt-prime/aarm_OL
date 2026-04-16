@@ -1,6 +1,6 @@
 ---
 title: "Formal"
-description: "Protocol-aware reverse proxy for data, infrastructure, and AI agent security"
+description: "PAM and agentic runtime security for AI agents and humans"
 ---
 
 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
@@ -74,23 +74,23 @@ description: "Protocol-aware reverse proxy for data, infrastructure, and AI agen
 
 ### Description
 
-Formal is a protocol-aware reverse proxy that enforces least privilege at the wire-protocol level across data, infrastructure, and AI agent traffic. It sits between identities — engineers, BI tools, CI/CD pipelines, and AI agents — and resources like databases, warehouses, SSH/Kubernetes, and MCP servers, parsing 15+ wire protocols natively and evaluating security policies inline on every request.
+Formal is a protocol-aware reverse proxy that enforces least privilege at the wire-protocol level across data, infrastructure, and AI agent traffic. It sits between identities (humans and AI agents) and resources like databases, warehouses, SSH/Kubernetes servers, and MCP servers, parsing wire protocols natively and evaluating security policies inline on every request.
 
-For AI agent workloads, Formal proxies traffic between agents and MCP servers, applying the same policy surface it applies to human-initiated database queries: identity resolution, query-level authorization, PII masking, tool-call filtering, and full audit capture. Because the proxy parses MCP natively rather than treating it as opaque TCP traffic, it can make decisions on the specific tool being invoked, the arguments being passed, and the data flowing back.
+For AI agent workloads, Formal proxies traffic between agents and resources, applying the same policy surface it applies to human-initiated database queries: identity resolution, query-level authorization, PII masking, tool-call filtering, and full audit capture. Because the proxy parses wire protocols natively rather than treating it as opaque TCP traffic, it can make decisions on the specific tool being invoked, the arguments being passed, and the data flowing back.
 
 Formal's relevance to AARM is direct: it operates at the wire-protocol chokepoint where agents call tools, which makes it a natural pre-execution enforcement point for authorization, identity binding, and tamper-evident auditing of autonomous agent activity.
 
 ### Platform capabilities
 
-<CardGroup cols={2}>
-  <Card title="MCP proxy with wire-level parsing" icon="shield-halved">
-    Proxies every tool call between AI agents and MCP servers with native MCP protocol parsing, enabling decisions on the specific tool and arguments invoked rather than opaque TCP metadata.
+<<CardGroup cols={2}>
+  <Card title="Universal agent network proxy" icon="shield-halved">
+    Proxies every AI agent network call including databases, infrastructure, and MCP servers. Native MCP protocol parsing enables decisions on the specific tool and arguments invoked rather than opaque TCP metadata.
   </Card>
-  <Card title="Nine inline policy actions" icon="filter">
-    Allow, Block, Mask, Filter, Rewrite, Quarantine, Suspend, MFA, and Impersonate — evaluated at three stages of the request lifecycle: session, request, and response.
+  <Card title="Eight inline policy actions" icon="filter">
+    Allow, Block, Mask, Filter, Rewrite, Quarantine, Suspend, and MFA — evaluated at three stages of the request lifecycle: session, request, and response.
   </Card>
   <Card title="Identity-aware access control" icon="fingerprint">
-    Okta-integrated provisioning, short-lived credentials, and JIT access workflows via Slack and Jira. Every identity — human or agent — is resolved before policy evaluation.
+    JIT access scoped to individual commands and data, not just roles, provisioned via Slack and Jira with Okta-integrated, short-lived credentials. Every identity, human or agent, is resolved before policy evaluation.
   </Card>
   <Card title="Panopticon audit layer" icon="list-check">
     Every query, session, and policy decision logged with full context across every protocol. Sub-second search across full history, with export to Splunk, Datadog, or S3.
@@ -109,10 +109,10 @@ Formal sits at the wire-protocol layer, so the same proxy governs agent traffic,
 
 <AccordionGroup>
   <Accordion title="Protocols and resources">
-    One stateless binary handles 15+ protocols including MCP, Postgres, MySQL, MongoDB, Snowflake, BigQuery, ClickHouse, DynamoDB, Redis, S3, SSH, Kubernetes, RDP, HTTP, and gRPC. Native wire-level parsing, not generic TCP passthrough.
+    One stateless binary handles various protocols including MCP, Postgres, MySQL, MongoDB, Snowflake, BigQuery, ClickHouse, DynamoDB, Redis, S3, SSH, Kubernetes, RDP, HTTP, and gRPC. Native wire-level parsing, not generic TCP passthrough.
   </Accordion>
   <Accordion title="AI clients and agents">
-    Supports any MCP-compatible client or agent, including Claude Code, Cursor, and custom-built agents. No client-side SDK or code changes required — agents point their MCP connection string through the Formal proxy.
+    Supports any client or agent, including Claude Code, Cursor, and custom-built agents. No client-side SDK or code changes required — agents point their MCP connection string through the Formal proxy.
   </Accordion>
   <Accordion title="Identity and security stack">
     Native Okta integration for SSO and provisioning, with Slack and Jira hooks for just-in-time access requests. Audit logs export to Splunk, Datadog, and S3.
@@ -138,12 +138,13 @@ Formal sits at the wire-protocol layer, so the same proxy governs agent traffic,
 ### Architecture
 
 Formal enforces AARM requirements through interception at two complementary layers. The first is a client-side layer that sits between a developer's AI coding tools and the model APIs they call, allowing agent tool calls to be inspected and blocked pre-execution based on policy. Customers who want observability only can operate without this layer; customers who want enforcement route traffic through it.
- 
-The second layer is Formal's protocol-aware proxy between identities and downstream resources such as databases, HTTP services, and productivity suites. It applies policy across session, request, and response stages and can allow, block, modify, or step up authentication on a given call. Because agent-originated traffic carries context from the first layer, the proxy can differentiate a human-issued query from one issued by an agent session and apply controls accordingly.
- 
-Session context is captured across both layers, with the agent session as the parent and downstream calls recorded as linked child events. This gives operators a full replay of every action an agent took, scoped to the resolved identity of the user whose environment initiated it. Policy decisions, identity bindings, and tool calls are written to a tamper-evident audit trail, exportable to common SIEM and observability backends.
- 
+
+The second layer is Formal's protocol-aware proxy between identities and downstream resources such as databases, HTTP services, and productivity suites. It applies policies across session, request, and response stages and can allow, block, or modify, a given request. Because agent-originated traffic carries context from the first layer, the proxy can differentiate a human-issued query from one issued by an agent session and apply controls accordingly.
+
+Session context is captured across both layers, with the agent session as the parent and downstream requests recorded as linked child events. This gives operators a full replay of every action an agent took, scoped to the resolved identity of the user whose environment initiated it. Policy decisions, identity bindings, and tool calls are written to a tamper-evident audit trail, exportable to common SIEM and observability backends.
+
 Policy evaluation today is deterministic and pre-execution only. Formal's policy surface is limited to static scenarios that block or modify agent actions before they execute based on predefined rules, rather than evaluating non-deterministic intent alignment at runtime. Asynchronous behavioral analysis runs alongside the enforcement path and is on the roadmap to feed into real-time policy inputs.
+
 
 ### AARM requirement coverage
 
@@ -168,19 +169,20 @@ Policy evaluation today is deterministic and pre-execution only. Formal's policy
 
 ### Company
 
-Formal is building the protocol-aware security proxy layer for modern data, infrastructure, and AI agent workloads. Rather than operating at the network layer like a traditional firewall, Formal parses wire protocols natively — Postgres, MySQL, MongoDB, MCP, and over a dozen others — which lets it make query-level decisions on who is doing what to which resource, in real time.
+Formal is building the protocol-aware security proxy layer for data, infrastructure, and AI agent workloads. Rather than operating at the network layer like a traditional firewall, Formal parses wire protocols natively which lets it make query-level decisions on who is doing what to which resource, in real time.
 
-The company's thesis is that as AI agents proliferate inside enterprises, the enforcement point that matters most is the one closest to the resource, not the one closest to the agent. A proxy that understands the wire protocol can strip PII from MCP responses before they reach an LLM, block unauthorized tool calls, and enforce permissions that the upstream system does not natively support — all without requiring application changes, SDKs, or changes to the agent itself.
+The company's thesis is that as AI agents proliferate inside enterprises, the enforcement point that matters most is the one closest to the resource, not the one closest to the agent. A proxy that understands the wire protocol can strip PII from responses before they reach an LLM, block unauthorized tool calls, and enforce permissions that the upstream system does not natively support, without requiring any changes to the application, SDKs, or to the agent itself.
 
-Formal's AI agent use case sits alongside its original data access governance product, and the same proxy serves both: the policy engine, audit layer, and deployment model are unified across human and agent traffic. Customers include Notion, Gusto, Ramp, Cursor, Modern Health, Anchorage, and Doctolib.
+Formal's AI agent use case sits alongside its original data access governance product, and the same proxy serves both: the policy engine, audit layer, and deployment model are unified across human and agent traffic. Customers include Notion, Cursor, Anchorage, and EliseAI.
+
 
 ### Key facts
 
 | | |
 |---|---|
-| Founded | 2022 (YC S20; legal entity Maytana, Inc.) |
-| Funding | $5.8M seed (Thrive Capital, Y Combinator, Abstract Ventures, Kima Ventures) |
-| Customers | Notion, Gusto, Ramp, Cursor, Modern Health, Anchorage, Doctolib, ManoMano |
+| Founded | 2023
+| Funding | $6M+ seed (Thrive Capital) |
+| Customers | Fast growing AI companies (Cursor, Notion, EliseAI) |
 | Leadership | Mokhtar Bacha (Founder & CEO) |
 | Deployment | Self-hosted in customer VPC (Terraform, Pulumi, Kubernetes, Docker) |
 
